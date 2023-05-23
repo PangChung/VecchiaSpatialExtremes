@@ -14,7 +14,7 @@ library(mvtnorm)
 library(Rfast)
 library(partitions)
 
-wd <- "~/project/vecchia_project/"
+wd <- "."
 setwd(wd)
 
 source('code/simu_Dombry_et_al.R')
@@ -37,7 +37,7 @@ qs.vecchia <- c(2,5) #sizes of conditioning set in the Vecchia approximation
 orderings.vecchia <- c(1,2,4) ## 1=vertical coordinate ordering, 2=random ordering, 3=middle-out ordering, 4=max-min ordering
 MDA <- FALSE # should the data be simulated in the max-domain of attraction?
 M <- 100 # block size, if simulation is done in the MDA
-Rs <- c(1:20)+Rs*20-20 # replications
+Rs <- c(1:20)*20 # replications
 ncores <- 20 # number of cores for parallel computing
 simul <- 1 
 subsimul <- 'a'
