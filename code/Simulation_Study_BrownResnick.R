@@ -103,10 +103,10 @@ mle.r <- function(r,ncores=1){
 		      if(!MDA){
 		        vario <- function(x){ ## coordinates
 		          if(!is.matrix(x)){
-		            sig <- vario.func(loc=matrix(x,ncol=2),init,relocate = FALSE)
+		            sig <- vario.func(loc=matrix(x,ncol=2),init)
 		            val=sig[1,1]/2
 		          }else{
-		            sig <- vario.func(loc=x,init,relocate = FALSE)  
+		            sig <- vario.func(loc=x,init)  
 		            val = sig[1,1]/2+sig[2,2]/2-sig[1,2]
 		          }
 		          return(val)
@@ -114,9 +114,9 @@ mle.r <- function(r,ncores=1){
 		        data <- simu_extrfcts(model="brownresnick",no.simu=n,coord=loc,vario=vario)$res # data simulation
 		      } else{
 		        N <- M*n
-		        sigma2 <- drop(vario.func(loc=c(0,0),par,relocate = FALSE))
+		        sigma2 <- drop(vario.func(loc=c(0,0),par))
 		        lambda <- sqrt(sigma2)
-		        W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par,relocate = FALSE))) + rexp(N,rate=lambda) # data simulation  from factor copula model
+		        W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par))) + rexp(N,rate=lambda) # data simulation  from factor copula model
 		        Copula <- pnorm(W)-exp(lambda^2/2-lambda*W)*pnorm(W-lambda)
 		        data.MDA <- 1/(1-Copula)
 		        data <- matrix(nrow=n,ncol=D) # this will contain block maxima
@@ -160,10 +160,10 @@ mle.r <- function(r,ncores=1){
 		          if(!MDA){
 		            vario <- function(x){ ## coordinates
 		              if(!is.matrix(x)){
-		                sig <- vario.func(loc=matrix(x,ncol=2),init,relocate = FALSE)
+		                sig <- vario.func(loc=matrix(x,ncol=2),init)
 		                val=sig[1,1]/2
 		              }else{
-		                sig <- vario.func(loc=x,init,relocate = FALSE)  
+		                sig <- vario.func(loc=x,init)  
 		                val = sig[1,1]/2+sig[2,2]/2-sig[1,2]
 		              }
 		              return(val)
@@ -171,9 +171,9 @@ mle.r <- function(r,ncores=1){
 		            data <- simu_extrfcts(model="brownresnick",no.simu=n,coord=loc,vario=vario)$res # data simulation
 		          } else{
 		            N <- M*n
-		            sigma2 <- drop(vario.func(loc=c(0,0),par,relocate = FALSE))
+		            sigma2 <- drop(vario.func(loc=c(0,0),par))
 		            lambda <- sqrt(sigma2)
-		            W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par,relocate = FALSE))) + rexp(N,rate=lambda) # data simulation from factor copula model
+		            W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par))) + rexp(N,rate=lambda) # data simulation from factor copula model
 		            Copula <- pnorm(W)-exp(lambda^2/2-lambda*W)*pnorm(W-lambda)
 		            data.MDA <- 1/(1-Copula)
 		            data <- matrix(nrow=n,ncol=D) # this will contain block maxima
@@ -238,15 +238,15 @@ mle.r <- function(r,ncores=1){
 		          set.seed(18462*r+8934+r) ## we fix the random seed for each D, alpha, n, but we take a different random seed for each experiment r=1,...,1024 (so the Vecchia sequence based on random ordering changes for each r)
 		          if(!MDA){
 		            vario <- function(x){
-		              sig <- vario.func(loc=rbind(x,0),par,relocate=FALSE)
+		              sig <- vario.func(loc=rbind(x,0),par)
 		              return(sig[1,1]-sig[1,2])
 		            }
 		            data <- simu_extrfcts(model="brownresnick",no.simu=n,coord=loc,vario=vario)$res # data simulation
 		          } else{
 		            N <- M*n
-		            sigma2 <- drop(vario.func(loc = c(0,0),par,relocate = FALSE))
+		            sigma2 <- drop(vario.func(loc = c(0,0),par))
 		            lambda <- sqrt(sigma2)
-		            W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par,relocate = FALSE))) + rexp(N,rate=lambda) # data simulation from factor copula model
+		            W <- mvtnorm::rmvnorm(N,sigma=cov2cor(vario.func(loc,par))) + rexp(N,rate=lambda) # data simulation from factor copula model
 		            Copula <- pnorm(W)-exp(lambda^2/2-lambda*W)*pnorm(W-lambda)
 		            data.MDA <- 1/(1-Copula)
 		            data <- matrix(nrow=n,ncol=D) # this will contain block maxima
