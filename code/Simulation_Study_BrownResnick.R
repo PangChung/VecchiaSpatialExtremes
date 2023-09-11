@@ -38,7 +38,7 @@ orderings.vecchia <- c(1,2,4) ## 1=vertical coordinate ordering, 2=random orderi
 MDA <- FALSE # should the data be simulated in the max-domain of attraction?
 M <- 100 # block size, if simulation is done in the MDA
 Rs <- c(1:20)*20 # replications
-ncores <- 20 # number of cores for parallel computing
+ncores <- 10 # number of cores for parallel computing
 simul <- 1 
 subsimul <- 'a'
 
@@ -67,7 +67,7 @@ pars.mat <- matrix(pars,nrow=dimpars,ncol=npars)
 ###########################################
 
 #Simulation for a single replicate r in input vector Rs
-mle.r <- function(r,ncores=1){
+mle.r <- function(r,ncores=1){ 
   
   if(any(estimators==1)){
     estimates.MLE.r <- array(dim=c(length(Ds),length(ns),npars,dimpars))
@@ -160,10 +160,10 @@ mle.r <- function(r,ncores=1){
 		          if(!MDA){
 		            vario <- function(x){ ## coordinates
 		              if(!is.matrix(x)){
-		                sig <- vario.func(loc=matrix(x,ncol=2),init)
+		                sig <- vario.func(loc=matrix(x,ncol=2),par)
 		                val=sig[1,1]/2
 		              }else{
-		                sig <- vario.func(loc=x,init)  
+		                sig <- vario.func(loc=x,par)  
 		                val = sig[1,1]/2+sig[2,2]/2-sig[1,2]
 		              }
 		              return(val)
@@ -237,9 +237,15 @@ mle.r <- function(r,ncores=1){
 		          par <- pars.mat[,k]
 		          set.seed(18462*r+8934+r) ## we fix the random seed for each D, alpha, n, but we take a different random seed for each experiment r=1,...,1024 (so the Vecchia sequence based on random ordering changes for each r)
 		          if(!MDA){
-		            vario <- function(x){
-		              sig <- vario.func(loc=rbind(x,0),par)
-		              return(sig[1,1]-sig[1,2])
+		            vario <- function(x){ ## coordinates
+		              if(!is.matrix(x)){
+		                sig <- vario.func(loc=matrix(x,ncol=2),par)
+		                val=sig[1,1]/2
+		              }else{
+		                sig <- vario.func(loc=x,par)  
+		                val = sig[1,1]/2+sig[2,2]/2-sig[1,2]
+		              }
+		              return(val)
 		            }
 		            data <- simu_extrfcts(model="brownresnick",no.simu=n,coord=loc,vario=vario)$res # data simulation
 		          } else{
