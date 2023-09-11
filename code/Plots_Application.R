@@ -280,7 +280,7 @@ for(i in 1:length(directions)){
     extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
     colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Reds")[-1])
     for(id in 1:length(extcoef.Pair)){
-      lines(dists,extcoef.Pair[[id]],lty=1,lwd=1.5,col=colors[id])
+      lines(dists,extcoef.Pair[[id]],lty=2,lwd=1.5,col=colors[id])
     }
     model.ind=which(order.ind[,1] == 14 & order.ind[,2]!=6)
     extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
