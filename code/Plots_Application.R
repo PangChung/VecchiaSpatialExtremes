@@ -11,10 +11,9 @@ library(rgdal)
 
 source("code/MLE_BrownResnick.R"); 
 load("data/data.RData");load("data/prediction_estimates4_1.Rdata")
-tiylim <- c(11,31)
-#map <- get_map(location=c(xlim[1],ylim[1],xlim[2],ylim[2]),zoom=5,source="google",
-#	color="color",maptype="satellite",force=TRUE)
 load("data/GoogleMap.RData")
+xlim <- c(31,45)
+ylim <- c(11,31)
 ewbreaks <- c(32, 36, 40, 44)
 nsbreaks <- c(12, 18, 24, 30)
 ewlabels <- unlist(lapply(ewbreaks, function(x) paste(" ",abs(x), "ºE")))
@@ -41,6 +40,7 @@ neighbours2predict <- sapply((1:nrow(distmat))[-ind.sub],FUN=neighbours,ind.sub=
 par(mfrow=c(1,1),cex=2,cex.axis=2,cex.lab=2,mar=c(5,5,1,1))
 plot(loc.sub.trans[ind.sub,1],loc.sub.trans[ind.sub,2],xlab="Transformed x (km)",ylab="Transformed y (km)",col="black",pch=20)
 if(ratio.ind!=1){
+# plot the testing sites in red
 points(loc.sub.trans[-ind.sub,1],loc.sub.trans[-ind.sub,2],col="red",pch=20)
 }
 #ind.neigbours <- unique(c(neighbours2predict))
@@ -155,18 +155,29 @@ ext.boxplot <- function(id,n.classes = 50){
                                          return(ceiling((sub.dists[i]- min.dist + 0.1)/width.classes))
                                        }),n.classes)
   classes.mid = sort(classes.mid[unique(grp.extcoef)])
-  #pdf(paste0("figure/boxplot_ext_fixed/boxplot_distance_",scenarios[order.ind[id,1],1],"_",scenarios[order.ind[id,1],2],"_",scenarios[order.ind[id,1],3],"_",scenarios[order.ind[id,1],4],"_",order.ind[id,2],".pdf"))
-  pdf(paste("figure/boxplot_ext_3/boxplot_distance",scenarios[id,1],scenarios[id,2]*2,scenarios[id,3],scenarios[id,4],scenarios[id,5],".pdf",sep = "_"))
-  par(mfrow=c(1,1),mar=c(3.5,4,2,0),cex.lab=1.5,mgp=c(2,1,0))
+  #pdf(paste0("figure/boxplot_distance_",scenarios[order.ind[id,1],1],"_",scenarios[order.ind[id,1],2],"_",scenarios[order.ind[id,1],3],"_",scenarios[order.ind[id,1],4],"_",order.ind[id,2],".pdf"))
+  pdf(paste("figure/boxplot_distance",scenarios[id,1],scenarios[id,2]*2,scenarios[id,3],scenarios[id,4],scenarios[id,5],".pdf",sep = "_"))
+  par(mfrow=c(1,1),mar=c(3.5,4,2,0),cex.lab=2,mgp=c(2,1,0))
   plot(sub.dists,sub.extcoef,type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients")
   boxplot(sub.extcoef~grp.extcoef,add=TRUE,at=classes.mid,xaxt="n",boxwex=15,outline=FALSE)
-  lines(extcoef.Pair[,2],extcoef.Pair[,1],lty=1,lwd=3,col="red")
+  lines(extcoef.Pair[,2],extcoef.Pair[,1],lty=2,lwd=3,col="red")
   abline(h=c(1,2),col="lightgrey")
   dev.off()
 }
-sapply(1:nrow(par.mat),ext.boxplot,n.classes=100)
 
-### 
+func <- function(idx){which(scenarios[,1] == idx[1] & scenarios[,2]==idx[2]/2 & scenarios[,3]==idx[3] & scenarios[,4]==idx[4] & scenarios[,5]==idx[5])}
+
+# Figure 4
+ext.boxplot(func(c(1,2,0,4,3)),n.classes=100)
+ext.boxplot(func(c(2,2,0,3,3)),n.classes = 100)
+ext.boxplot(func(c(1,2,1,2,2)),n.classes = 100)
+ext.boxplot(func(c(2,1,1,3,2)),n.classes = 100)
+# plot all the boxplots in Figure 4
+#sapply(1:nrow(par.mat),ext.boxplot,n.classes=100)
+
+### Figure 5: plot the fitted extremal coefficients for differect directions
+## load the estimates and plot ###
+load("data/prediction_estimates_fixed.Rdata")
 D = nrow(loc.sub.trans)
 pairs <- t(combn(D,2))
 angle <- function(id){
@@ -214,29 +225,29 @@ grp.extcoef[[i]] <- pmin(sapply(1:sum(ind.angle[[i]]),
 classes.mid[[i]] = sort(classes.mid[[i]][unique(grp.extcoef[[i]])])
 }
 
-index=unique(order.ind[,1])
-#index = 1:nrow(estimates)
-for(j in index){
-model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
-pdf(paste0("figure/boxplot_ext_fixed/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
-par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0))
-for(i in 1:length(directions)){
-  plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
+# index=unique(order.ind[,1])
+# index = 1:nrow(estimates)
+# for(j in index){
+# model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
+# pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
+# par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0))
+# for(i in 1:length(directions)){
+#   plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
    
-  boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=25,outline=FALSE)
-  extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
-  for(id in 1:length(extcoef.Pair)){
-  lines(dists,extcoef.Pair[[id]],lty=1,col=id)
-  }
-  abline(h=c(1,2),col="lightgrey")
-  }
-dev.off()
-}
+#   boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=25,outline=FALSE)
+#   extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
+#   for(id in 1:length(extcoef.Pair)){
+#   lines(dists,extcoef.Pair[[id]],lty=1,col=id)
+#   }
+#   abline(h=c(1,2),col="lightgrey")
+#   }
+# dev.off()
+# }
 
 index=unique(order.ind[,1])
 library(RColorBrewer)
 for(j in index){
-  pdf(paste0("figure/boxplot_ext_fixed/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
+  pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
   par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0),cex.main=1.5)
   model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
   for(i in 1:length(directions)){
@@ -256,8 +267,8 @@ for(j in index){
 }
 
 library(RColorBrewer)
-pdf(paste0("figure/boxplot_ext_fixed/boxplot_distance_angle.pdf"),width=4*3,height=4*2)
-par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0),cex.main=1.5)
+pdf(paste0("figure/boxplot_distance_angle.pdf"),width=4*3,height=4*2)
+par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=2,mgp=c(2,1,0),cex.main=2)
 for(i in 1:length(directions)){
     plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
     #box.colors <- grey.colors(n=length(unique(grp.extcoef[[i]]))+1,start=0.1,end=1,alpha=0.5,rev=TRUE)[-1][rank(table(grp.extcoef[[i]]))]

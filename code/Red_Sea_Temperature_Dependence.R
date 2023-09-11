@@ -71,11 +71,11 @@ time.used <- system.time(fit.result <- MVLE.BR(data=maxima.frechet[,ind.sub],ini
 nlog.pred.val = NULL
 if(model.eval & ratio!=1){
   set.seed(1)
-  neighbours <- function(ind,ind.sub,q,qr){
+  neighbours <- function(ind,ind.sub,qr){
     ind.neighbours <- ind.sub[order(distmat[ind,ind.sub])[1:qr]]
     return(ind.neighbours)
   }
-  neighbours2predict <- sapply((1:nrow(distmat))[-ind.sub],FUN=neighbours,ind.sub=ind.sub,q=0,qr=4)
+  neighbours2predict <- sapply((1:nrow(distmat))[-ind.sub],FUN=neighbours,ind.sub=ind.sub,qr=4)
   par.val <- fit.result$par
   nlog.pred.val <- nlogVecchialik.BR(par=par.val,data=maxima.frechet,distmat=loc.sub.trans,FUN=vario.func,vecchia.seq=(1:nrow(distmat))[-ind.sub],neighbours = neighbours2predict,ncores=ncores)
 }

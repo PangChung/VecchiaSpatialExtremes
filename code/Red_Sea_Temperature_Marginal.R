@@ -23,13 +23,13 @@ library(rgdal)
 ###########################################
 
 rm(list=ls()) # clear the environment
-wd <- ".."
+wd <- "."
 setwd(wd)
 
 load("data/data_original.RData")
 
-x <- sort(unique(loc[,1]))
-y <- sort(unique(loc[,2]))
+x <- sort(unique(loc.sub[,1]))
+y <- sort(unique(loc.sub[,2]))
 
 nx <- length(x)
 ny <- length(y)
@@ -358,6 +358,7 @@ gg61 <- gg61 + theme(legend.text = element_text(size = 12))
 gg61 <- gg61 + theme(legend.key.width = unit(0.5, "cm"))
 gg61 <- gg61 + theme(legend.title = element_text(size = 12))
 gg61 <- gg61 + geom_point(aes(x = lon, y = lat, colour = "white"), data = my.point, alpha = 1, shape = 16, size = 3, col = "black")
+gg61 
 
 gg6 <- ggmap(map, extent = "panel", legend = "bottomleft")
 gg6 <- gg6 + geom_point(aes(x = lon, y = lat, colour = temp), data = data.sd.trend.plot, alpha = 1, na.rm = T, shape = 15, size = 1.0)
@@ -375,6 +376,7 @@ gg6 <- gg6 + theme(legend.text = element_text(size = 12))
 gg6 <- gg6 + theme(legend.key.width = unit(0.5, "cm"))
 gg6 <- gg6 + theme(legend.title = element_text(size = 12))
 gg62 <- gg6 + geom_point(aes(x = lon, y = lat, colour = "white"), data = my.point, alpha = 1, shape = 16, size = 3, col = "black")
+gg62
 
 pdf("figure/marginal_est_coef.pdf",width = 8,height = 8,onefile = TRUE)
 plot_grid(gg51,gg52,gg61,gg62,ncol=2)
@@ -698,4 +700,4 @@ plot(sub.dists,sub.extcoef,type="n",pch=20,ylim=c(1,2),xlab="Distance",ylab="Emp
 boxplot(sub.extcoef~grp.extcoef,add=TRUE,at=classes.mid,xaxt="n",boxwex=30)
 abline(h=c(1,2),col="lightgrey")
 
-save(maxima.frechet,distmat,loc.sub,file="data/data.RData")
+#save(maxima.frechet,distmat,loc.sub,file="data/data.RData")
