@@ -195,7 +195,8 @@ sub.extcoef <- sapply(1:ncol(all.pairs),
                       FUN=function(i){
                         return(min(2,max(1,1/mean(1/pmax(maxima.frechet[,all.pairs[1,i]],maxima.frechet[,all.pairs[2,i]])))))
                       })
-directions = c(15,45,75,105,135,165)
+#directions = c(15,45,75,105,135,165)
+directions = seq(15,180,15)
 dists <- seq(min(sub.dists),max(sub.dists),length.out=1000)
 n.classes=20
 #n.ratio = 6
@@ -244,31 +245,31 @@ classes.mid[[i]] = sort(classes.mid[[i]][unique(grp.extcoef[[i]])])
 # dev.off()
 # }
 
-index=unique(order.ind[,1])
-library(RColorBrewer)
-for(j in index){
-  pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
-  par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0),cex.main=1.5)
-  model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
-  for(i in 1:length(directions)){
-    plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
-    grp.table <- as.numeric(table(grp.extcoef[[i]]))
-    grp.table = 1-grp.table/max(grp.table)
-    box.colors <- grey(level=grp.table,alpha=0.5) 
-    boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=35,outline=FALSE,col=box.colors)
-    extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
-    colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Reds")[-1])
-    for(id in 1:length(extcoef.Pair)){
-      lines(dists,extcoef.Pair[[id]],lty=1,lwd=1.5,col=colors[id])
-    }
-    abline(h=c(1,2),col="lightgrey")
-  }
-  dev.off()
-}
+# index=unique(order.ind[,1])
+# library(RColorBrewer)
+# for(j in index){
+#   pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
+#   par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0),cex.main=1.5)
+#   model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
+#   for(i in 1:length(directions)){
+#     plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
+#     grp.table <- as.numeric(table(grp.extcoef[[i]]))
+#     grp.table = 1-grp.table/max(grp.table)
+#     box.colors <- grey(level=grp.table,alpha=0.5) 
+#     boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=35,outline=FALSE,col=box.colors)
+#     extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
+#     colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Reds")[-1])
+#     for(id in 1:length(extcoef.Pair)){
+#       lines(dists,extcoef.Pair[[id]],lty=1,lwd=1.5,col=colors[id])
+#     }
+#     abline(h=c(1,2),col="lightgrey")
+#   }
+#   dev.off()
+# }
 
 library(RColorBrewer)
-pdf(paste0("figure/boxplot_distance_angle.pdf"),width=4*3,height=4*2)
-par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=2,mgp=c(2,1,0),cex.main=2)
+pdf(paste0("figure/boxplot_distance_angle.pdf"),width=4*4,height=4*3)
+par(mfrow=c(3,4),mar=c(3.5,2,3.5,0),pty="s",cex.lab=2,mgp=c(2,1,0),cex.main=2)
 for(i in 1:length(directions)){
     plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
     #box.colors <- grey.colors(n=length(unique(grp.extcoef[[i]]))+1,start=0.1,end=1,alpha=0.5,rev=TRUE)[-1][rank(table(grp.extcoef[[i]]))]
@@ -292,3 +293,28 @@ for(i in 1:length(directions)){
 }
 dev.off()
 
+library(RColorBrewer)
+pdf(paste0("figure/boxplot_distance_angle2.pdf"),width=4*3,height=4*2)
+par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=2,mgp=c(2,1,0),cex.main=2)
+for(i in seq(1,length(directions),2)){
+    plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
+    #box.colors <- grey.colors(n=length(unique(grp.extcoef[[i]]))+1,start=0.1,end=1,alpha=0.5,rev=TRUE)[-1][rank(table(grp.extcoef[[i]]))]
+    grp.table <- as.numeric(table(grp.extcoef[[i]]))
+    grp.table = 1-grp.table/max(grp.table)
+    box.colors <- grey(level=grp.table,alpha=0.5) 
+    boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=35,outline=FALSE,col=box.colors)
+    model.ind=which(order.ind[,1] == 1 & order.ind[,2]!=6)
+    extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
+    colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Reds")[-1])
+    for(id in 1:length(extcoef.Pair)){
+      lines(dists,extcoef.Pair[[id]],lty=2,lwd=1.5,col=colors[id])
+    }
+    model.ind=which(order.ind[,1] == 14 & order.ind[,2]!=6)
+    extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
+    colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Blues")[-1])
+    for(id in 1:length(extcoef.Pair)){
+      lines(dists,extcoef.Pair[[id]],lty=1,lwd=1.5,col=colors[id])
+    }
+    abline(h=c(1,2),col="lightgrey")
+}
+dev.off()
