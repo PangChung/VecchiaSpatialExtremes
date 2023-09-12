@@ -111,6 +111,10 @@ plot_grid(gg1,gg2,ncol=2,rel_widths = c(1.28,1))
 dev.off()
 
 ## plot of extremal coeffficents ###
+# scenario: anisotropic 1 and isotropic 2;shape parameter;composite likelihood (1) or vecchia likelihood (0); 
+# vecchia ordering or number of nearest neigbours for composite likelihood; number of historical sites for vecchia likelihood or 
+# cut off  "distance" for composite likelihood
+# load the fitted dataset under this experiment corresponding to Table 4 in the manuscript
 load("data/prediction_estimates4_1.Rdata")
 #load("data/prediction_estimates_fixed.Rdata")
 par.mat = estimates
@@ -177,6 +181,10 @@ ext.boxplot(func(c(2,1,1,3,2)),n.classes = 100)
 
 ### Figure 5: plot the fitted extremal coefficients for differect directions
 ## load the estimates and plot ###
+# scenario: fixed shape parameter 0.5 (1) or 1 (2); composite likelihood (1) or vecchia likelihood (0); 
+# vecchia ordering or number of nearest neigbours for composite likelihood; number of historical sites for vecchia likelihood or 
+# cut off  "distance" for composite likelihood
+# load the fitted dataset under this experiment corresponding to Figure 5 in the manuscript
 load("data/prediction_estimates_fixed.Rdata")
 D = nrow(loc.sub.trans)
 pairs <- t(combn(D,2))
@@ -199,8 +207,6 @@ sub.extcoef <- sapply(1:ncol(all.pairs),
 directions = seq(15,180,15)
 dists <- seq(min(sub.dists),max(sub.dists),length.out=1000)
 n.classes=20
-#n.ratio = 6
-#model.ind = sapply(2:n.ratio,function(i){which(order.ind[,2]==i)[which.min(nlog.pred.val[order.ind[,2]==i])]} )
 fun <- function(id,dists,direction){
   par.val = estimates[id,]
   extcoef.Pair <- sapply(dists,
@@ -225,47 +231,6 @@ grp.extcoef[[i]] <- pmin(sapply(1:sum(ind.angle[[i]]),
                            }),n.classes)
 classes.mid[[i]] = sort(classes.mid[[i]][unique(grp.extcoef[[i]])])
 }
-
-# index=unique(order.ind[,1])
-# index = 1:nrow(estimates)
-# for(j in index){
-# model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
-# pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
-# par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0))
-# for(i in 1:length(directions)){
-#   plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
-   
-#   boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=25,outline=FALSE)
-#   extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
-#   for(id in 1:length(extcoef.Pair)){
-#   lines(dists,extcoef.Pair[[id]],lty=1,col=id)
-#   }
-#   abline(h=c(1,2),col="lightgrey")
-#   }
-# dev.off()
-# }
-
-# index=unique(order.ind[,1])
-# library(RColorBrewer)
-# for(j in index){
-#   pdf(paste0("figure/boxplot_distance_angle_",scenarios[j,1],"_",scenarios[j,2]*2,"_",scenarios[j,3],"_",scenarios[j,4],".pdf"),width=4*3,height=4*2)
-#   par(mfrow=c(2,3),mar=c(3.5,2,3.5,0),pty="s",cex.lab=1.5,mgp=c(2,1,0),cex.main=1.5)
-#   model.ind=which(order.ind[,1] == j & order.ind[,2]!=6)
-#   for(i in 1:length(directions)){
-#     plot(sub.dists.angle[[i]],sub.extcoef[ind.angle[[i]]],xlim=range(sub.dists),type="n",pch=20,ylim=c(1,2),xlab="Distance [km]",ylab="Empirical bivariate extremal coefficients",main=paste0(directions[i],"º"))
-#     grp.table <- as.numeric(table(grp.extcoef[[i]]))
-#     grp.table = 1-grp.table/max(grp.table)
-#     box.colors <- grey(level=grp.table,alpha=0.5) 
-#     boxplot(sub.extcoef[ind.angle[[i]]]~grp.extcoef[[i]],add=TRUE,at=classes.mid[[i]],xaxt="n",boxwex=35,outline=FALSE,col=box.colors)
-#     extcoef.Pair = lapply(model.ind,fun,dists=dists,direction=directions[i])
-#     colors <- rev(brewer.pal(n=length(extcoef.Pair)+1,name="Reds")[-1])
-#     for(id in 1:length(extcoef.Pair)){
-#       lines(dists,extcoef.Pair[[id]],lty=1,lwd=1.5,col=colors[id])
-#     }
-#     abline(h=c(1,2),col="lightgrey")
-#   }
-#   dev.off()
-# }
 
 library(RColorBrewer)
 pdf(paste0("figure/boxplot_distance_angle.pdf"),width=4*4,height=4*3)
