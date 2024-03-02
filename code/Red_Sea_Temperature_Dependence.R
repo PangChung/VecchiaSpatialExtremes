@@ -3,11 +3,11 @@ load("data/data.RData");source("code/MLE_BrownResnick.R");
 #default setting
 q.comp <- 2 # number of nearest neigbours for composite likelihood c(2,3)
 dmax = 2
-q.vecchia <- 1 # number of 'historical sites' in the vecchia method 1,2,3,4
+q.vecchia <- 2 # number of 'historical sites' in the vecchia method 1,2,3,4
 vecchia.order = 1 # vecchia ordering c(1,2,3,4)
 ratio=1 #ratio of the dataset locations used for training, 1,1/2,1/4,1/8,1/16.
 init = c(1,100,1,0)
-fixed = c(T,F,F,F)
+fixed = c(F,F,T,T)
 for (arg in args) eval(parse(text = arg))
 
 ### Libraries that needed for the functions ###
@@ -19,6 +19,8 @@ library(partitions)
 ncores = detectCores()
 
 ## select the locations according to max-min ordering accoording to the ratio 
+distmat <- as.matrix(dist(coord))
+loc.sub.trans = coord
 ind.sub <- c()
 ind.sub[1]<-c(which.min(distmat[which.min(colMeans(distmat))[1],])) ## Vecchia sequence based on max-min ordering
 for(j in 2:nrow(loc.sub.trans)){
@@ -44,7 +46,7 @@ max.dist <- function(id){
 dist.max <- order(unlist(mclapply(1:ncol(all.index),max.dist,mc.cores = ncores)))  
 dist.ind<-which(dist.max <= D*dmax)
 all.index = all.index[,dist.ind]
-time.used <- system.time( fit.result <- MCLE.BR(data=maxima.frechet[,ind.sub],init=init,fixed=fixed,distmat=loc.sub.trans[ind.sub,],FUN = vario.func,index=all.index,ncores,method="Nelder-Mead",maxit=1000,hessian=hessian))[3]
+time.used <- system.time( fit.result <- MCLE.BR(data=samples.skew.normal1[[1]][,ind.sub],init=init,fixed=fixed,distmat=loc.sub.trans[ind.sub,],FUN = vario.func,index=all.index,ncores,method="Brent",maxit=1000,hessian=FALSE))[3]
 
 
 ## fit the model using Vecchia method

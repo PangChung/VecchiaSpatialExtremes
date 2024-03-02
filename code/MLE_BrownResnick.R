@@ -46,7 +46,7 @@ vario.func <- function(loc,par){ ##return a covariance matrix
 
 # check the paramaters 
 par.check <- function(par){
-  return( (par[1] > 0 & par[1] < 2 & par[2] > 10 & par[2] < 1000 & par[3] > 0) )
+  return( (par[1] > 0 & par[1] < 2 & par[2] > 0.01 & par[2] < 1000 & par[3] > 0) )
 }
 
 # par.check <- function(par){
@@ -256,15 +256,15 @@ MCLE.BR <- function(data,init,fixed,distmat,FUN,index,ncores,maxit=100,method="N
   fixed0 <- fixed
   index0 <- index
   init2 <- init
-  lower = c(0.5,50,0,-Inf)
-  upper = c(1.5,1000,Inf,Inf)
+  lower = c(0.1,0.1,0,-Inf)
+  upper = c(1.9,1000,Inf,Inf)
   val_fn = c()
-  if(method=="Nelder-Mead"){
+  if(sum(!fixed)!=1){
     opt <- optim(par=init2[!fixed],fn=nlogcomplik.BR2,method="Nelder-Mead",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
     init2[!fixed] = opt$par
   }
-  if(method!="Nelder-Mead"){
-    opt <- optim(par=init2[!fixed],fn=nlogcomplik.BR2,lower=lower[!fixed],upper=upper[!fixed],method="L-BFGS-B",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
+  if(sum(!fixed)==1){
+    opt <- optim(par=init2[!fixed],fn=nlogcomplik.BR2,lower = lower[!fixed],upper=upper[!fixed], method="Brent",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
     init2[!fixed] <- opt$par 
   }
   time <- proc.time()-t
@@ -318,17 +318,18 @@ MVLE.BR <- function(data,init,fixed,distmat,FUN,vecchia.seq,neighbours,ncores,ma
     if(!par.check(par)){return(Inf)}
     return(nlogVecchialik.BR(par,data,distmat,FUN,vecchia.seq,neighbours,ncores))
   }
+  
   fixed0 <- fixed
   init2 <- init
-  lower = c(0.5,50,0,-Inf)
+  lower = c(0.1,0.1,0,-Inf)
   upper = c(1.5,1000,Inf,Inf)
   val_fn = c()
-  if(method=="Nelder-Mead"){
+  if(sum(!fixed)!=1){
     opt <- optim(par=init2[!fixed],fn=nlogVecchialik.BR2,method="Nelder-Mead",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
     init2[!fixed] = opt$par
   }
-  if(method!="Nelder-Mead"){
-      opt <- optim(par=init2[!fixed],fn=nlogVecchialik.BR2,lower=lower[!fixed],upper=upper[!fixed],method="L-BFGS-B",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
+  if(sum(!fixed)==1){
+      opt <- optim(par=init2[!fixed],fn=nlogVecchialik.BR2,lower = lower[!fixed],upper=upper[!fixed],method="Brent",control=list(maxit=maxit,trace=TRUE),hessian=hessian)
       init2[!fixed] <- opt$par
   }
   time <- proc.time()-t
