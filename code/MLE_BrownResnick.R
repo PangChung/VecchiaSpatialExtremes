@@ -46,7 +46,7 @@ vario.func <- function(loc,par){ ##return a covariance matrix
 
 # check the paramaters 
 par.check <- function(par){
-  return( (par[1] > 0 & par[1] < 2 & par[2] > 0.01 & par[2] < 1000 & par[3] > 0) )
+  return( (par[1] > 0 & par[1] < 2 & par[2] > 0.01 & par[2] < 1000) )
 }
 
 # par.check <- function(par){
@@ -198,7 +198,8 @@ nloglik.BR <- function(par,data,distmat,FUN){
     #fix random seed (and save the current random seed to restore it at the end)
     oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())
     set.seed(747380)
-    sigma <- FUN(distmat,par)
+    #sigma <- FUN(distmat,par)
+    sigma = FUN(par,distmat)
     D <- ncol(data)
     all_combn <- lapply(1:D,FUN=combn,x=D,simplify=FALSE) ## not using package `Rfast' and return a list of lists
     all_nVI <- list() ## will contain all the terms nVI (total number is equal to 2^D-1), used later to assemble the log-likelihood...
@@ -231,7 +232,7 @@ nloglik.BR <- function(par,data,distmat,FUN){
 # index: q-by-Q matrix of q-dimensional margins to be used in the composite likelihood. Here Q refers to the number of composite likelihood contributions (with 1<=Q<=choose(D,q))
 nlogcomplik.BR <- function(par,data,distmat,FUN,index,ncores){
     nlogcomplik.contribution.BR <- function(index){
-      val <- nloglik.BR(par,data[,index],distmat[index,],FUN)
+      val <- nloglik.BR(par,data[,index],distmat[index,index],FUN)
     }
     res <- mean(unlist(mclapply(as.list(as.data.frame(index)),nlogcomplik.contribution.BR,mc.cores = ncores,mc.set.seed = F)),na.rm = TRUE)
     return(res)
@@ -253,6 +254,7 @@ MCLE.BR <- function(data,init,fixed,distmat,FUN,index,ncores,maxit=100,method="N
     if(!par.check(par)){return(Inf)}
     return(nlogcomplik.BR(par,data,distmat,FUN,index,ncores))
   }
+  browser()
   fixed0 <- fixed
   index0 <- index
   init2 <- init

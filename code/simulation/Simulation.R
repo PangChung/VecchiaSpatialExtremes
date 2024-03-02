@@ -1,7 +1,7 @@
 ######################################
 ### Load packages and source files ###
 ######################################
-
+rm(list=ls())
 library(parallel)
 library(methods)
 library(fields)
@@ -9,7 +9,7 @@ library(mvtnorm)
 library(Rfast)
 library(partitions)
 
-wd <- "/simulation/"
+wd <- "code/simulation/"
 setwd(wd)
 
 source('simu_Dombry_et_al.R',chdir=TRUE)
@@ -23,9 +23,9 @@ source('MLE_BrownResnick.R',chdir=TRUE)
 D <- 4^2 # dimension of the data
 n <- 50 # sample size for numerical experiments
 type <- 1 # type of correlation function (1=exponential, 2=powered exponential, 3=exchangeable)
-par <- c(5,10) # parameter values
+par <- c(1,1) # parameter values
 fixed <- c(FALSE,TRUE) # indicates whether or not the parameters are held fixed
-estimator <- 3 # 1=MLE, 2=Composite likelihood estimator (MCLE), 3=Vecchia estimator (MVLE)
+estimator <- 2 # 1=MLE, 2=Composite likelihood estimator (MCLE), 3=Vecchia estimator (MVLE)
 q.comp <- 2 # dimension of lower-dimensional margins used in the composite likelihoods
 dmax <- 1.4143 # maximum distance for selecting composite likelihood components 
 q.vecchia <- 1 # size of conditioning set in the Vecchia approximation (d=q-1)
@@ -76,7 +76,7 @@ mle.r <- function(r){
     max.dist <- function(x){
       return(max(distmat[x,x]))
     }
-    index <- all.index[,which(max.dist<=dmax)]
+    index <- all.index[,which(apply(all.index,2,max.dist)<=dmax)]
     
     tr <- try( time <- system.time( est <- MCLE.BR(data=data,init=init,fixed=fixed,distmat=distmat,type=type,index=index)$par )[3] ) ### Composite likelihood estimation based on q-uplets with maximum pairwise distance dmax
     if(!is(tr,"try-error")){

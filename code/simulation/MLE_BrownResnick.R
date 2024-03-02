@@ -225,7 +225,6 @@ nloglik.BR <- function(par,data,distmat,type=1){
 	  #fix random seed (and save the current random seed to restore it at the end)
 	  oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())
 	  set.seed(747380)
-	  
 	  sigma <- Sigma(par,distmat,type)
 	  D <- ncol(data)
 	  all_combn <- list()
