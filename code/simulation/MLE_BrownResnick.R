@@ -159,7 +159,7 @@ nVI <- function(data,sigma,I){
       log.data.I <- matrix(log(data[,I]),ncol=nI)
       
       gamma.inv <- t(K01)%*%A%*%K01
-      gamma <- solve(gamma.inv)
+      gamma <- chol2inv(chol(gamma.inv))
       mu <- -gamma%*%(t(K01)%*%A%*%K10%*%t(log.data.I) + rowSums(t(K01)%*%sigma.inv)/sum(sigma.inv))
       eval <- log(data[,-I])-t(mu)
       
