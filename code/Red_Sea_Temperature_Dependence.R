@@ -46,7 +46,7 @@ max.dist <- function(id){
 dist.max <- order(unlist(mclapply(1:ncol(all.index),max.dist,mc.cores = ncores)))  
 dist.ind<-which(dist.max <= D*dmax)
 all.index = all.index[,dist.ind]
-time.used <- system.time( fit.result <- MCLE.BR(data=samples.skew.normal1[[1]][,ind.sub],init=init,fixed=fixed,distmat=loc.sub.trans[ind.sub,],FUN = vario.func,index=all.index,ncores,method="Nelder-Mead",maxit=1000,hessian=FALSE))[3]
+time.used <- system.time( fit.result <- MCLE.BR(data=maxima.frechet[,ind.sub],init=init,fixed=fixed,distmat=loc.sub.trans[ind.sub,],FUN = vario.func,index=all.index,ncores,method="Nelder-Mead",maxit=1000,hessian=FALSE))[3]
 
 
 ## fit the model using Vecchia method
