@@ -254,7 +254,6 @@ MCLE.BR <- function(data,init,fixed,distmat,FUN,index,ncores,maxit=100,method="N
     if(!par.check(par)){return(Inf)}
     return(nlogcomplik.BR(par,data,distmat,FUN,index,ncores))
   }
-  browser()
   fixed0 <- fixed
   index0 <- index
   init2 <- init
